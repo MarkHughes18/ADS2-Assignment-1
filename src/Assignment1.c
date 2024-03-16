@@ -1,5 +1,6 @@
 #define _CRT_SECURE_NO_WARNINGS 1
 #define bool int
+#define Max_Cars 5
 
 /*Libraries*/
 #include <stdio.h>
@@ -8,12 +9,13 @@
 //Stucture template for car part of the linked list
 struct Car
 {
-    int regNumber;
-    char makeAndModel;
-    char color;
+    int regNumber[10];
+    char makeAndModel[50];
+    char color[15];
     int previousOwners;
     bool status;
     int deposit;
+    struct Car* next;
 };
 
 //Stucture template for one node
@@ -31,6 +33,7 @@ void viewAllCars();//view all care in the showroom
 void viewSpecificCar();//view a specific car in the showroom
 void menu();//menu for the user
 void modify();//modify a car in the showroom
+void leaveProgram(); // exit the program
 
 // Global Variables
 struct LinearNode *front = NULL; //front of the list
@@ -50,7 +53,10 @@ int main()
 /*method for menu*/
 void menu()
 {
+    struct Car showroom[Max_Cars];
+    int numCars = 0;
     int choice;
+    do{
     printf("1. Add a car\n");
     printf("2. Sell a car\n");
     printf("3. Reserve a car\n");
@@ -63,10 +69,10 @@ void menu()
     switch (choice)
     {
     case 1:
-        addCar();
+        addCar(showroom, &numCars);
         break;
     case 2:
-        sellCar();
+        sellCar(showroom, &numCars);
         break;
     case 3:
         reserveCar();
@@ -81,26 +87,101 @@ void menu()
         modify();
         break;
     case 7:
-        exit(0);
+        leaveProgram();
         break;
     default:
         printf("Invalid choice\n");
         break;
     }
+    }while(choice !=7);
 
-    return 0;
+    
 }
 
 /*method to add a car*/
-void addCar()
+void addCar(struct Car showroom[], int *numCars)
 {
+    //*check if the showroom is full*//
+    if(*numCars >= Max_Cars)
+    {
+        printf("This showromm is already full. You cannot add any more cars.\n");
+        return;
+    }
 
+    struct Car newCar;
+    printf("Please enter the regestration number of the car: ");
+    scanf("%d", &newCar.regNumber);
+
+    for(int i = 0; 0 < *numCars; i++)
+    {
+        if(strcmp(newCar.regNumber, showroom[i].regNumber) == 0)
+        {
+            printf("A car with this registration number is already in the showroom.\n");
+            return;
+        }
+    }
+
+    printf("Enter the make and model of the car: ");
+    scanf("%s", newCar.makeAndModel);
+    printf("Enter the color of the car: ");
+    scanf("%s", newCar.color);
+    printf("Enter the number of previous owners of the car: ");
+    scanf("%d", &newCar.previousOwners);
+
+    if(newCar.previousOwners > 3)
+    {
+        printf("This car has had too many previous owners.\nIt cannot be added to the showroom.\n");
+        return;
+    }
+
+    newCar.status = 0;
+
+    showroom[*numCars] = newCar;
+    (*numCars)++;
+
+    printf("This car has been successfully add to the showroom.\n");
 }
 
 /*method to sell a car*/
-void sellCar()
+void sellCar(struct Car showroom[], int *numCars)
 {
+    char sellReg[20];
+    int foundCar = -1;
 
+    printf("Enter the registration number of the car being sold: ");
+    scanf("%s", sellReg);
+
+    for(int i = 0; i < numCars; i++)
+    {
+        if(strcmp(sellReg, showroom[i].regNumber) == 0)
+        {
+            foundCar = i;
+            break;
+        }
+    }
+
+    if(foundCar == -1)
+    {
+        printf("The car with registration number %s is not in the showroom.\n", sellReg);
+        return;
+    }
+
+    if (showroom[foundCar].status == 0)
+    {
+        printf("The car with registration number %s is not available for sale at the moment.\n", sellReg);
+        return;
+    }
+
+    printf("The car with the registration number %s has been sold.\n", sellReg);
+
+    for (int i = foundCar; i < *numCars - i; i++)
+    {
+        showroom[i] = showroom[i + 1]
+    }
+
+    *numCars--;
+
+    printf("the car with this registrationnumber has been removed from the showroom.\n");
 }
 
 /*method to reserve a car*/
@@ -125,4 +206,10 @@ void viewSpecificCar()
 void modify()
 {
 
+}
+
+void leaveProgram()
+{
+    printf("You have chosen to leave the showroom.");
+    exit(0);
 }
