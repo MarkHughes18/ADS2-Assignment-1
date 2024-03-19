@@ -15,6 +15,7 @@ struct Car
     int previousOwners;
     bool status;
     int deposit;
+    char mod[50];
     struct Car* next;
 };
 
@@ -57,6 +58,7 @@ void menu()
     int numCars = 0;
     int choice;
     do{
+    printf("\nThis is the showroom menu. Please select one of the following: \n");
     printf("1. Add a car\n");
     printf("2. Sell a car\n");
     printf("3. Reserve a car\n");
@@ -78,10 +80,10 @@ void menu()
         reserveCar();
         break;
     case 4:
-        viewAllCars();
+        viewAllCars(showroom, numCars);
         break;
     case 5:
-        viewSpecificCar();
+        viewSpecificCar(showroom, numCars);
         break;
     case 6:
         modify();
@@ -127,6 +129,8 @@ void addCar(struct Car showroom[], int *numCars)
     scanf("%s", newCar.color);
     printf("Enter the number of previous owners of the car: ");
     scanf("%d", &newCar.previousOwners);
+    printf("Enter if this car has any modifications: ");
+    scanf("%d", &newCar.mod);
 
     if(newCar.previousOwners > 3)
     {
@@ -176,7 +180,7 @@ void sellCar(struct Car showroom[], int *numCars)
 
     for (int i = foundCar; i < *numCars - i; i++)
     {
-        showroom[i] = showroom[i + 1]
+        showroom[i] = showroom[i + 1];
     }
 
     *numCars--;
@@ -191,15 +195,118 @@ void reserveCar()
 }
 
 /*method to view all cars*/
-void viewAllCars()
+void viewAllCars(struct Car showroom[], int numCars)
 {
+    int pick;
+    printf("Please select one of the following options.\n");
+    printf("1. View all cars in the showroom\n");
+    printf("2. View all cars available for sale\n");
+    printf("3. View all cars of a specific make and model\n");
+    printf("4. View all cars of a specific color\n");
+    scanf("%d", &pick);
 
+    switch(pick)
+    {
+        case 1:
+        printf("\nAll cars in the showroom");
+            for (int i = 0; i < numCars; i++)
+            {
+                printf("Registration number: %d\n", showroom[i].regNumber);
+                printf("Make and Model: %s\n", showroom[i].makeAndModel);
+                printf("Color: %s\n", showroom[i].color);
+                printf("Previous Owners: %d\n", showroom[i].previousOwners);
+                printf("Modifications: %s\n", showroom[i].mod);
+                printf("Status: %d\n", showroom[i].status);
+            }
+        break;
+        case 2:
+        printf("\nAll cars available for sale");
+            for (int i = 0; i < numCars; i++)
+            {
+                if (showroom[i].status == 1)
+                {
+                    printf("Registration number: %d\n", showroom[i].regNumber);
+                    printf("Make and Model: %s\n", showroom[i].makeAndModel);
+                    printf("Color: %s\n", showroom[i].color);
+                    printf("Previous Owners: %d\n", showroom[i].previousOwners);
+                    printf("Modifications: %s\n", showroom[i].mod);
+                    printf("Status: %d\n", showroom[i].status);
+                }
+            }
+        break;
+        case 3: 
+        printf("\nPlease enter the Make and Model of the car you wish to view: ");
+        char makeModel[50];
+        scanf("%s", makeModel);
+        printf("\nAll cars of the make and model %s", makeModel);
+            for (int i = 0; i < numCars; i++)
+            {
+                if (strcmp(makeModel, showroom[i].makeAndModel) == 0)
+                {
+                    printf("Registration number: %d\n", showroom[i].regNumber);
+                    printf("Make and Model: %s\n", showroom[i].makeAndModel);
+                    printf("Color: %s\n", showroom[i].color);
+                    printf("Previous Owners: %d\n", showroom[i].previousOwners);
+                    printf("Modifications: %s\n", showroom[i].mod);
+                    printf("Status: %d\n", showroom[i].status);
+                }
+            }
+        break;
+        case 4: 
+        printf("\nPlease enter the color of the car you wish to view: ");
+        char carColor[15];
+        scanf("%s", carColor);
+        printf("\nAll cars of color %s", carColor);
+            for (int i = 0; i < numCars; i++)
+            {
+                if (strcmp(carColor, showroom[i].color) == 0)
+                {
+                    printf("Registration number: %d\n", showroom[i].regNumber);
+                    printf("Make and Model: %s\n", showroom[i].makeAndModel);
+                    printf("Color: %s\n", showroom[i].color);
+                    printf("Previous Owners: %d\n", showroom[i].previousOwners);
+                    printf("Modifications: %s\n", showroom[i].mod);
+                    printf("Status: %d\n", showroom[i].status);
+                }
+            }
+        break;
+        default:
+        printf("Incorrect Choice Entered\n");
+        break;
+    }
 }
 
 /*method to view a specific car*/
-void viewSpecificCar()
+void viewSpecificCar(struct Car showroom[], int numCars)
 {
+    char searcgReg[20];
+    int foundCar = -1;
 
+    printf("Enter the registration number of the car you wish to view: ");
+    scanf("%s", searcgReg);
+
+    for (int i = 0; i < numCars; i++)
+    {
+        if(strcmp(searcgReg, showroom[i].regNumber) == 0)
+        {
+            foundCar = i;
+            break;
+        }
+    }
+
+    if (foundCar == -1)
+    {
+        printf("\nThe car with the registration number %s is not in the showroom.\n", searcgReg);
+    }
+    else
+    {
+        printf("Registration number: %d\n", showroom[foundCar].regNumber);
+        printf("Make and Model: %s\n", showroom[foundCar].makeAndModel);
+        printf("Color: %s\n", showroom[foundCar].color);
+        printf("Previous Owners: %d\n", showroom[foundCar].previousOwners);
+        printf("Modifications: %s\n", showroom[foundCar].mod);
+        printf("Status: %d\n", showroom[foundCar].status);
+    }
 }
 
 /*method to modify a car*/
